@@ -19,7 +19,7 @@ Gem::Specification.new do |spec|
     The headline use case is catching WCAG color-contrast failures in CI.
   DESC
 
-  spec.homepage = "https://github.com/guidedrails/axe-cuprite"
+  spec.homepage = "https://github.com/Guided-Rails/axe-cuprite"
   spec.license  = "MIT"
   spec.required_ruby_version = ">= 3.0"
 
