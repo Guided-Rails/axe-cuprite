@@ -74,22 +74,23 @@ module AxeCuprite
     def inject_source!
       source = AxeCuprite.axe_source
 
+      # Primary path: CDP execute_script. Swallow a raise here so we still get a
+      # shot at the fallback — execute_script may also silently no-op (axe just
+      # never lands), so either way the real verdict is the injected? check below.
       begin
         @page.execute_script(source)
-      rescue StandardError => e
-        raise InjectionError, "Failed to inject axe-core: #{e.message}" unless try_add_script_tag(source)
+      rescue StandardError
+        nil
       end
-
       return true if injected?
 
-      # execute_script silently no-op'd (CSP, sandbox, ...). Try the tag fallback.
-      if try_add_script_tag(source) && injected?
-        true
-      else
-        raise InjectionError,
-              "axe-core did not load after injection. A strict Content-Security-Policy " \
-              "may be blocking script injection on the page under test."
-      end
+      # Fallback: Ferrum's add_script_tag.
+      try_add_script_tag(source)
+      return true if injected?
+
+      raise InjectionError,
+            "axe-core did not load after injection. The page may be blocking " \
+            "script injection (e.g. a strict Content-Security-Policy)."
     end
 
     # Run axe and return a Results object. Injects on demand if needed.
