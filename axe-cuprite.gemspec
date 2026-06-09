@@ -15,8 +15,7 @@ Gem::Specification.new do |spec|
     (be_axe_clean / be_accessible). Unlike Deque's official axe-core-capybara gem,
     it never touches Selenium-specific driver internals: axe is driven entirely
     through Capybara's driver-neutral JavaScript API, so it works with Cuprite
-    (the Ferrum/CDP headless-Chrome driver) and any other real-browser driver.
-    The headline use case is catching WCAG color-contrast failures in CI.
+    and any other real-browser driver.
   DESC
 
   spec.homepage = "https://github.com/Guided-Rails/axe-cuprite"
