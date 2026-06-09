@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- GitHub Actions CI (`.github/workflows/ci.yml`): runs the RSpec suite under
+  Cuprite/headless Chrome across Ruby 3.0–3.4 and a RuboCop lint job, on every
+  push to `main` and all pull requests.
+
 ### Fixed
 - `Injector#inject_source!` no longer appends a second `<script>` tag when a hard
   injection failure occurs. The retry flow is now a single linear path
