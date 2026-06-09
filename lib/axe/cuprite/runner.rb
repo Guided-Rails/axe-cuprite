@@ -56,9 +56,7 @@ module AxeCuprite
       # default_tags become a tag-based runOnly, but only if nothing already
       # scopes runOnly (an explicit rule/tag selection takes precedence).
       tags = Normalize.tags(@configuration.default_tags)
-      if !opts.key?("runOnly") && !tags.empty?
-        opts["runOnly"] = { "type" => "tag", "values" => tags }
-      end
+      opts["runOnly"] = { "type" => "tag", "values" => tags } if !opts.key?("runOnly") && !tags.empty?
 
       # global skip_rules disable rules, without clobbering an explicit caller
       # setting for the same rule.

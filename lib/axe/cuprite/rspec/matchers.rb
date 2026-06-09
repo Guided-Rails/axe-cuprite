@@ -27,7 +27,7 @@ module AxeCuprite
         @skip_rules = []
         @tags       = []
         @run_options = {}
-        @timeout    = nil
+        @timeout = nil
       end
 
       # --- chainable DSL ----------------------------------------------------
@@ -153,8 +153,8 @@ module AxeCuprite
         end
 
         unless @skip_rules.empty?
-          opts[:rules] = Normalize.rules(@skip_rules).each_with_object({}) do |id, h|
-            h[id] = { enabled: false }
+          opts[:rules] = Normalize.rules(@skip_rules).to_h do |id|
+            [id, { enabled: false }]
           end
         end
 
@@ -167,8 +167,8 @@ module AxeCuprite
         rule_count = @violations.length
         node_count = @violations.sum { |v| v.nodes.length }
         "expected page to be axe-clean, but found #{rule_count} " \
-          "#{pluralize(rule_count, 'violation')} across #{node_count} " \
-          "#{pluralize(node_count, 'element')}:"
+          "#{pluralize(rule_count, "violation")} across #{node_count} " \
+          "#{pluralize(node_count, "element")}:"
       end
 
       def details
@@ -179,7 +179,7 @@ module AxeCuprite
         lines = []
         impact = violation.impact || "n/a"
         lines << "  ● [#{impact}] #{violation.id} — #{violation.help} " \
-                 "(#{violation.nodes.length} #{pluralize(violation.nodes.length, 'element')})"
+                 "(#{violation.nodes.length} #{pluralize(violation.nodes.length, "element")})"
         lines << "    #{violation.help_url}" if violation.help_url
 
         violation.nodes.first(MAX_NODES).each do |node|
@@ -187,7 +187,7 @@ module AxeCuprite
         end
 
         remaining = violation.nodes.length - MAX_NODES
-        lines << "      … and #{remaining} more #{pluralize(remaining, 'element')}" if remaining.positive?
+        lines << "      … and #{remaining} more #{pluralize(remaining, "element")}" if remaining.positive?
         lines.join("\n")
       end
 

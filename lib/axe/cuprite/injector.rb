@@ -95,9 +95,7 @@ module AxeCuprite
       ensure_present!
 
       raw = evaluate_axe(context, options, timeout)
-      if raw.is_a?(Hash) && raw["error"]
-        raise AxeRunError, "axe.run failed: #{raw["error"]}"
-      end
+      raise AxeRunError, "axe.run failed: #{raw["error"]}" if raw.is_a?(Hash) && raw["error"]
 
       Results.new(raw)
     end

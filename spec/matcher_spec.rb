@@ -27,7 +27,7 @@ RSpec.describe "be_axe_clean matcher" do
         expect(msg).to include("color-contrast")
         expect(msg).to match(/contrast \d+(\.\d+)?:1/)
         expect(msg).to include("needs 4.5:1")
-        expect(msg).to match(/fg #/)
+        expect(msg).to include("fg #")
         expect(msg.downcase).to include("on bg #ffffff")
         expect(msg).to include("#faded")
         expect(msg).to match(/serious|moderate/) # impact label
@@ -94,7 +94,7 @@ RSpec.describe "be_axe_clean matcher" do
       visit "/bad_contrast"
       expect(page).to be_axe_clean.checking_only(:color_contrast)
 
-      expect(io.string).to match(/report_only/)
+      expect(io.string).to include("report_only")
       expect(io.string).to include("color-contrast")
     end
   end

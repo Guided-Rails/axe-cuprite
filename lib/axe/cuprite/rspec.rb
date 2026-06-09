@@ -20,8 +20,8 @@ module AxeCuprite
   end
 end
 
-if defined?(::RSpec) && ::RSpec.respond_to?(:configure)
-  ::RSpec.configure do |config|
+if defined?(RSpec) && RSpec.respond_to?(:configure)
+  RSpec.configure do |config|
     config.include AxeCuprite::RSpec::DSL
   end
 end

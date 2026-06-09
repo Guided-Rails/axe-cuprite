@@ -81,14 +81,15 @@ class FixtureApp
   HTML
 
   ROUTES = {
-    "/passing"      => PASSING,
+    "/passing" => PASSING,
     "/bad_contrast" => BAD_CONTRAST,
-    "/mixed"        => MIXED,
-    "/csp"          => CSP
+    "/mixed" => MIXED,
+    "/csp" => CSP
   }.freeze
 
   def call(env)
-    body = ROUTES.fetch(env["PATH_INFO"], "<!doctype html><html lang=\"en\"><head><title>Not found</title></head><body><main><h1>Not found</h1></main></body></html>")
+    body = ROUTES.fetch(env["PATH_INFO"],
+                        '<!doctype html><html lang="en"><head><title>Not found</title></head><body><main><h1>Not found</h1></main></body></html>')
     [200, { "content-type" => "text/html; charset=utf-8" }, [body]]
   end
 end

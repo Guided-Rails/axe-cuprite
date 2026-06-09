@@ -33,8 +33,8 @@ RSpec.configure do |config|
   config.expect_with(:rspec) { |c| c.syntax = :expect }
   config.include Capybara::DSL
 
-  config.before(:each) { AxeCuprite.reset_configuration! }
-  config.after(:each)  { Capybara.reset_sessions! }
+  config.before { AxeCuprite.reset_configuration! }
+  config.after  { Capybara.reset_sessions! }
 
   config.order = :defined
 end
