@@ -74,9 +74,6 @@ module AxeCuprite
     def inject_source!
       source = AxeCuprite.axe_source
 
-      # Primary path: CDP execute_script. Swallow a raise here so we still get a
-      # shot at the fallback — execute_script may also silently no-op (axe just
-      # never lands), so either way the real verdict is the injected? check below.
       begin
         @page.execute_script(source)
       rescue StandardError
@@ -84,7 +81,6 @@ module AxeCuprite
       end
       return true if injected?
 
-      # Fallback: Ferrum's add_script_tag.
       try_add_script_tag(source)
       return true if injected?
 
