@@ -12,6 +12,6 @@ RSpec.describe AxeCuprite::Normalize do
   it "normalizes tags" do
     expect(described_class.tag(:wcag2aa)).to eq("wcag2aa")
     expect(described_class.tag(:best_practice)).to eq("best-practice")
-    expect(described_class.tags([:wcag2aa, :best_practice])).to eq(%w[wcag2aa best-practice])
+    expect(described_class.tags(%i[wcag2aa best_practice])).to eq(%w[wcag2aa best-practice])
   end
 end
