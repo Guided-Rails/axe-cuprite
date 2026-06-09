@@ -40,7 +40,14 @@ Vendoring the axe-core engine (development-time only — never fetched at runtim
 rake 'axe:update[4.12.0]'   # pin a version: downloads axe.min.js + LICENSE, bumps AXE_CORE_VERSION
 rake axe:update             # grab latest from npm
 rake axe:version            # print the currently vendored version
+rake axe:verify             # check vendored axe.min.js against its recorded sha512 (CI runs this)
 ```
+
+`axe:update` is supply-chain hardened: it downloads the official tarball from
+registry.npmjs.org (never a CDN), verifies the registry-published sha512 `dist.integrity`
+(and `dist.shasum`) **before writing anything**, treats a banner/version mismatch as fatal,
+and records the engine's sha512 in `lib/axe/cuprite/vendor/axe.min.js.sha512`. Keep all of
+that intact — the vendored file is the JS injected into every consumer's browser session.
 
 After `axe:update`, note the bump in `CHANGELOG.md` by hand (the rake task reminds you but does
 not edit the changelog).

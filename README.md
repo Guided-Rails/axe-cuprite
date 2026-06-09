@@ -223,10 +223,17 @@ To refresh it:
 rake 'axe:update[4.12.0]'   # pin a version
 rake axe:update             # or grab the latest from npm
 rake axe:version            # print the currently vendored version
+rake axe:verify             # check axe.min.js against its recorded sha512
 ```
 
-`axe:update` downloads `axe.min.js` and its `LICENSE` from unpkg and bumps the
-`AXE_CORE_VERSION` constant. Note the bump in `CHANGELOG.md`.
+`axe:update` downloads the official `axe-core` tarball from
+**registry.npmjs.org**, verifies it against the sha512 integrity the registry
+publishes (aborting on any mismatch before writing a byte), extracts
+`axe.min.js` and its `LICENSE`, and bumps the `AXE_CORE_VERSION` constant. The
+sha512 of the vendored engine is recorded in
+`lib/axe/cuprite/vendor/axe.min.js.sha512` so it can be re-checked at any time
+with `rake axe:verify` (CI does this on every run). Note the bump in
+`CHANGELOG.md`.
 
 ## Licensing
 

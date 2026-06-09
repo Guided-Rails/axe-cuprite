@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Security
+- `rake axe:update` now vendors axe-core from the official npm registry tarball
+  (`registry.npmjs.org`) instead of the unpkg CDN, verifies the tarball against
+  the registry-published sha512 `dist.integrity` (and legacy `dist.shasum`)
+  **before writing anything**, and treats a banner/version mismatch as fatal
+  instead of a warning ([#11](https://github.com/Guided-Rails/axe-cuprite/issues/11)).
+- The sha512 of the vendored `axe.min.js` is now recorded in
+  `lib/axe/cuprite/vendor/axe.min.js.sha512`; a new `rake axe:verify` task
+  re-checks the vendored engine against it, and CI runs it on every build.
+
 ## [0.1.1] - 2026-06-09
 
 ### Added
