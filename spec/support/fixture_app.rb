@@ -58,6 +58,24 @@ class FixtureApp
     </html>
   HTML
 
+  # A paragraph whose text sits over a CSS gradient. axe cannot determine the
+  # composited background color, so color-contrast comes back as *incomplete*
+  # (needs review) rather than a hard violation — exercises Results#incomplete.
+  INCOMPLETE = <<~HTML
+    <!doctype html>
+    <html lang="en">
+    <head><meta charset="utf-8"><title>Incomplete fixture</title></head>
+    <body>
+      <main>
+        <h1>Needs review</h1>
+        <p id="review" style="color:#777777; background-image: linear-gradient(to right, #ffffff, #000000);">
+          axe cannot compute contrast over a gradient, so this needs manual review.
+        </p>
+      </main>
+    </body>
+    </html>
+  HTML
+
   # A strict Content-Security-Policy (no 'unsafe-inline', no 'unsafe-eval') over
   # the bad-contrast markup. Proves injection-via-CDP still lands axe and finds
   # the violation even when the page forbids inline/eval scripts.
@@ -96,6 +114,7 @@ class FixtureApp
     "/passing" => PASSING,
     "/bad_contrast" => BAD_CONTRAST,
     "/mixed" => MIXED,
+    "/incomplete" => INCOMPLETE,
     "/csp" => CSP
   }.freeze
 

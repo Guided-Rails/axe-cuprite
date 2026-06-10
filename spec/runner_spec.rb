@@ -86,6 +86,22 @@ RSpec.describe AxeCuprite::Runner do
     end
   end
 
+  describe "incomplete (needs-review) results" do
+    it "exposes nodes axe could not decide on, without failing" do
+      visit "/incomplete"
+      results = described_class.new(page).run(
+        options: { runOnly: { type: "rule", values: ["color-contrast"] } }
+      )
+
+      # The gradient background can't be resolved, so color-contrast lands in
+      # `incomplete` rather than `violations` — surfaced for review, never failed.
+      expect(results.passes?).to be(true)
+      expect(results.incomplete).not_to be_empty
+      expect(results.incomplete.first).to be_a(AxeCuprite::Violation)
+      expect(results.incomplete.map(&:id)).to include("color-contrast")
+    end
+  end
+
   describe "Content-Security-Policy" do
     it "still injects and detects violations under a strict CSP" do
       visit "/csp"
@@ -101,6 +117,56 @@ RSpec.describe AxeCuprite::Runner do
       AxeCuprite.configure { |c| c.skip_rules = [:color_contrast] }
       visit "/bad_contrast"
       expect(described_class.new(page).run.passes?).to be(true)
+    end
+
+    describe "default_tags" do
+      it "scopes the run to the configured tags" do
+        AxeCuprite.configure { |c| c.default_tags = [:best_practice] }
+        visit "/bad_contrast"
+        # color-contrast is a wcag2aa rule, not best-practice, so scoping the run
+        # to best-practice tags leaves nothing failing on this page.
+        expect(described_class.new(page).run.passes?).to be(true)
+      end
+
+      it "is ignored when the caller already scopes runOnly" do
+        AxeCuprite.configure { |c| c.default_tags = [:best_practice] }
+        visit "/bad_contrast"
+        # The caller's rule-scoped runOnly takes precedence; default_tags is not
+        # applied, so color-contrast still runs and fails.
+        results = described_class.new(page).run(
+          options: { runOnly: { type: "rule", values: ["color-contrast"] } }
+        )
+        expect(results.passes?).to be(false)
+      end
+    end
+
+    describe "default_options" do
+      it "merges beneath caller options, the caller winning on a conflicting key" do
+        AxeCuprite.configure do |c|
+          c.default_options = { runOnly: { type: "rule", values: ["color-contrast"] } }
+        end
+        visit "/bad_contrast"
+        # The default would scope to (failing) color-contrast; the caller's runOnly
+        # overrides it, scoping to a rule that can't fail on this page.
+        results = described_class.new(page).run(
+          options: { runOnly: { type: "rule", values: ["image-alt"] } }
+        )
+        expect(results.passes?).to be(true)
+      end
+
+      it "deep-merges nested option hashes rather than replacing them" do
+        AxeCuprite.configure do |c|
+          c.default_options = { rules: { "color-contrast" => { enabled: false } } }
+        end
+        visit "/bad_contrast"
+        # The caller disables a different rule. A shallow merge would drop the
+        # default's color-contrast entry and the page would fail; it passes only
+        # if the nested `rules` hashes merge and both stay disabled.
+        results = described_class.new(page).run(
+          options: { rules: { "region" => { enabled: false } } }
+        )
+        expect(results.passes?).to be(true)
+      end
     end
 
     it "raises InjectionError when auto_inject is off and axe is absent" do
