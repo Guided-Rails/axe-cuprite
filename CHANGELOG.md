@@ -24,6 +24,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   message (`Underlying errors: execute_script: ...; add_script_tag: ...`), so a
   dead browser, dead CDP session, or misconfigured driver is no longer
   misattributed to CSP ([#15](https://github.com/Guided-Rails/axe-cuprite/issues/15)).
+- `Injector#timeout_error?` no longer reclassifies arbitrary failures as
+  `AxeCuprite::TimeoutError` just because the error message mentions a timeout.
+  A genuine page-side JavaScript error (e.g. a `Ferrum::JavaScriptError` from axe
+  or the app whose text happens to contain "timeout") now propagates untouched
+  instead of being rewritten with misleading "increase the timeout / scope the
+  run" guidance. Classification is driven by error class (Ferrum's
+  timeout/script-timeout classes), with a narrow class-gated message check only
+  for Ferrum's async-evaluation "timed out promise" case; this also removes a
+  dead code branch that could never affect the result
+  ([#16](https://github.com/Guided-Rails/axe-cuprite/issues/16)).
 
 ### Security
 - `rake axe:update` now vendors axe-core from the official npm registry tarball
