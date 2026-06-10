@@ -72,6 +72,43 @@ RSpec.describe "be_axe_clean matcher" do
         be_axe_clean.checking_only(:color_contrast).according_to(:wcag2aa).matches?(page)
       end.to raise_error(ArgumentError, /not both/)
     end
+
+    it "accepts multiple within selectors (include-array branch)" do
+      expect(page).to be_axe_clean.within("#good", "h1")
+    end
+
+    it "fails when any of multiple within selectors is offending" do
+      expect(page).not_to be_axe_clean.within("#good", "#bad")
+    end
+
+    it "combines within and excluding (dual-key context)" do
+      expect(page).to be_axe_clean.within("main").excluding("#bad")
+    end
+
+    it "still fails when excluding leaves the offending region in scope" do
+      expect(page).not_to be_axe_clean.within("main").excluding("#good")
+    end
+  end
+
+  describe "raw options and timeout chaining" do
+    it "with_options injects raw axe options (disabling a rule)" do
+      visit "/bad_contrast"
+      expect(page).to be_axe_clean.with_options(rules: { "color-contrast" => { enabled: false } })
+    end
+
+    it "with_options can scope the run via a raw runOnly" do
+      visit "/bad_contrast"
+      expect(page).not_to be_axe_clean.with_options(
+        runOnly: { type: "rule", values: ["color-contrast"] }
+      )
+    end
+
+    it "with_timeout overrides the axe timeout for the assertion" do
+      visit "/bad_contrast"
+      expect do
+        be_axe_clean.with_timeout(0.001).matches?(page)
+      end.to raise_error(AxeCuprite::TimeoutError, /did not finish within/)
+    end
   end
 
   describe "negation" do
