@@ -44,13 +44,5 @@ RSpec.describe AxeCuprite::Injector do
     it "does NOT treat an arbitrary StandardError mentioning 'timed out' as a timeout" do
       expect(classify(StandardError.new("the request timed out somewhere"))).to be(false)
     end
-
-    it "treats Selenium's script-timeout class as a timeout (non-Ferrum fallback path)" do
-      # Stand in for the selenium-webdriver class — selenium is not a dependency,
-      # so we match purely on class name. Defined inline to mirror the real name.
-      stub_const("Selenium::WebDriver::Error::ScriptTimeoutError", Class.new(StandardError))
-      error = Selenium::WebDriver::Error::ScriptTimeoutError.new("script timed out")
-      expect(classify(error)).to be(true)
-    end
   end
 end

@@ -48,15 +48,13 @@ module AxeCuprite
 
     # Dedicated timeout classes that mean "the evaluation timed out" regardless
     # of message. Matched by name (not constant) so we keep no hard dependency on
-    # ferrum/selenium — both are dev-only deps. Covers Ferrum's own timeouts (the
-    # Cuprite fast-path, via page.evaluate_async) and the script-timeout classes
-    # the non-Ferrum fallback surfaces through Selenium's evaluate_async_script.
-    # See #timeout_error?.
+    # ferrum — it's a dev-only dep. Covers Ferrum's own timeouts (the Cuprite
+    # fast-path, via page.evaluate_async). A non-Ferrum driver's own script-timeout
+    # error propagates raw rather than being wrapped — we don't depend on or test
+    # any such driver here, so we don't guess at its class names. See #timeout_error?.
     TIMEOUT_ERROR_CLASS_NAMES = [
       "Ferrum::TimeoutError",
-      "Ferrum::ScriptTimeoutError",
-      "Selenium::WebDriver::Error::ScriptTimeoutError",
-      "Selenium::WebDriver::Error::TimeoutError"
+      "Ferrum::ScriptTimeoutError"
     ].freeze
 
     def initialize(page, configuration = AxeCuprite.configuration)

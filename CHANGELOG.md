@@ -30,10 +30,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   or the app whose text happens to contain "timeout") now propagates untouched
   instead of being rewritten with misleading "increase the timeout / scope the
   run" guidance. Classification is driven by error class (Ferrum's
-  timeout/script-timeout classes and the non-Ferrum fallback's Selenium
-  script-timeout classes), with a narrow class-gated message check only for
-  Ferrum's async-evaluation "timed out promise" case; this also removes a dead
-  code branch that could never affect the result
+  timeout/script-timeout classes), with a narrow class-gated message check only
+  for Ferrum's async-evaluation "timed out promise" case; this also removes a
+  dead code branch that could never affect the result
   ([#16](https://github.com/Guided-Rails/axe-cuprite/issues/16)).
 
 ### Security
