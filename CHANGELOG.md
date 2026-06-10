@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-06-10
+
 ### Added
 - `config.include_html` (default `true`) — set to `false` to suppress the
   truncated outer-HTML snippets that failure messages and `report_only` logs
@@ -57,6 +59,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (`.github/dependabot.yml`) for the `github-actions` and `bundler` ecosystems so
   the pinned SHAs and gem dependencies get automated update PRs
   ([#12](https://github.com/Guided-Rails/axe-cuprite/issues/12)).
+- `rake axe:update[VERSION]` now validates the `VERSION` argument against a
+  semver-ish pattern **before** any network call or file write. The value was
+  previously spliced unvalidated into the registry/download URL and into
+  `version.rb`, so a crafted string (e.g. `4.12.0/../other-pkg`, or one
+  containing a quote) could vendor a different package or break out of the
+  version string literal ([#13](https://github.com/Guided-Rails/axe-cuprite/issues/13)).
 
 ## [0.1.1] - 2026-06-09
 
