@@ -51,3 +51,6 @@ jobs:
 
       - name: Run RuboCop
         run: bundle exec rubocop
+
+      - name: Verify vendored axe-core checksum
+        run: bundle exec rake axe:verify
