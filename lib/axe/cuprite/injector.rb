@@ -46,6 +46,19 @@ module AxeCuprite
     # JS expression that reports whether axe is loaded and runnable.
     PRESENCE_JS = "typeof window.axe !== 'undefined' && typeof window.axe.run === 'function'"
 
+    # Dedicated timeout classes that mean "the evaluation timed out" regardless
+    # of message. Matched by name (not constant) so we keep no hard dependency on
+    # ferrum/selenium — both are dev-only deps. Covers Ferrum's own timeouts (the
+    # Cuprite fast-path, via page.evaluate_async) and the script-timeout classes
+    # the non-Ferrum fallback surfaces through Selenium's evaluate_async_script.
+    # See #timeout_error?.
+    TIMEOUT_ERROR_CLASS_NAMES = [
+      "Ferrum::TimeoutError",
+      "Ferrum::ScriptTimeoutError",
+      "Selenium::WebDriver::Error::ScriptTimeoutError",
+      "Selenium::WebDriver::Error::TimeoutError"
+    ].freeze
+
     def initialize(page, configuration = AxeCuprite.configuration)
       @page = page
       @config = configuration
@@ -180,13 +193,24 @@ module AxeCuprite
       "#{message}\nUnderlying errors: #{detail}"
     end
 
+    # Did `evaluate_axe` fail because axe.run genuinely timed out (so the
+    # "increase the timeout / scope the run" guidance is right), or did it hit a
+    # real page-side error that must propagate untouched?
+    #
+    # Classification is driven by error CLASS, not message. A message that merely
+    # mentions a timeout is deliberately NOT sufficient: a real Ferrum::JavaScriptError
+    # from axe or the app whose text happens to contain "timeout" must not be
+    # rewritten as an AxeCuprite::TimeoutError with misleading guidance.
+    #
+    # The one message check is narrow and class-gated: Ferrum reports its own
+    # async-evaluation timeout (page.evaluate_async) as a generic JavaScriptError
+    # carrying a "timed out promise" message, so for that class — and only that
+    # class — the message is what tells a timeout apart from a real JS error.
     def timeout_error?(error)
-      return true if error.message.to_s =~ /tim(e|ed)\s*out/i
+      name = error.class.name.to_s
+      return true if TIMEOUT_ERROR_CLASS_NAMES.include?(name)
 
-      # Ferrum raises its own timeout/JS errors; match by class name without a
-      # hard dependency on the Ferrum constants (ferrum is only a dev dep here).
-      error.class.name.to_s =~ /Ferrum::(Timeout|JavaScript)Error/ &&
-        error.message.to_s =~ /timed out promise/i
+      name == "Ferrum::JavaScriptError" && error.message.to_s.match?(/timed out promise/i)
     end
   end
 end

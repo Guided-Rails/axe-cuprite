@@ -87,12 +87,13 @@ RSpec/ExampleLength:
 RSpec/MultipleExpectations:
   Max: 11
 
-# Offense count: 2
+# Offense count: 3
 # Configuration parameters: CustomTransform, IgnoreMethods, IgnoreMetadata, InflectorPath, EnforcedInflector.
 # SupportedInflectors: default, active_support
 RSpec/SpecFilePathFormat:
   Exclude:
     - '**/spec/routing/**/*'
+    - 'spec/injector_spec.rb'
     - 'spec/normalize_spec.rb'
     - 'spec/runner_spec.rb'
 
