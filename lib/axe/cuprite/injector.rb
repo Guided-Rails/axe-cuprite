@@ -73,20 +73,23 @@ module AxeCuprite
     # to Ferrum's add_script_tag.
     def inject_source!
       source = AxeCuprite.axe_source
+      errors = {}
 
       begin
         @page.execute_script(source)
-      rescue StandardError
-        nil
+      rescue StandardError => e
+        errors["execute_script"] = e
       end
       return true if injected?
 
-      try_add_script_tag(source)
+      begin
+        try_add_script_tag(source)
+      rescue StandardError => e
+        errors["add_script_tag"] = e
+      end
       return true if injected?
 
-      raise InjectionError,
-            "axe-core did not load after injection. The page may be blocking " \
-            "script injection (e.g. a strict Content-Security-Policy)."
+      raise InjectionError, injection_failure_message(errors)
     end
 
     # Run axe and return a Results object. Injects on demand if needed.
@@ -154,15 +157,27 @@ module AxeCuprite
       nil
     end
 
-    # Best-effort CSP fallback via Ferrum's add_script_tag(content:).
+    # Best-effort CSP fallback via Ferrum's add_script_tag(content:). Returns
+    # false when no Ferrum add_script_tag is available (non-Ferrum drivers); lets
+    # a genuine injection failure propagate so inject_source! can report it.
     def try_add_script_tag(source)
       fpage = ferrum_page
       return false unless fpage.respond_to?(:add_script_tag)
 
       fpage.add_script_tag(content: source)
       true
-    rescue StandardError
-      false
+    end
+
+    # Build the InjectionError message, appending whatever the injection paths
+    # actually raised so a non-CSP failure (dead browser, dead CDP session,
+    # misconfigured driver) isn't silently blamed on Content-Security-Policy.
+    def injection_failure_message(errors)
+      message = "axe-core did not load after injection. The page may be blocking " \
+                "script injection (e.g. a strict Content-Security-Policy)."
+      return message if errors.empty?
+
+      detail = errors.map { |path, e| "#{path}: #{e.class}: #{e.message}" }.join("; ")
+      "#{message}\nUnderlying errors: #{detail}"
     end
 
     def timeout_error?(error)

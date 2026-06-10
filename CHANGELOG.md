@@ -16,6 +16,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   behavior and `logger` guidance in the README
   ([#14](https://github.com/Guided-Rails/axe-cuprite/issues/14)).
 
+### Fixed
+- `Injector#inject_source!` no longer hides the real cause of an injection
+  failure behind a blanket Content-Security-Policy message. When both the
+  primary `execute_script` path and the `add_script_tag` fallback fail, the
+  exceptions they raised are now captured and appended to the `InjectionError`
+  message (`Underlying errors: execute_script: ...; add_script_tag: ...`), so a
+  dead browser, dead CDP session, or misconfigured driver is no longer
+  misattributed to CSP ([#15](https://github.com/Guided-Rails/axe-cuprite/issues/15)).
+
 ### Security
 - `rake axe:update` now vendors axe-core from the official npm registry tarball
   (`registry.npmjs.org`) instead of the unpkg CDN, verifies the tarball against
