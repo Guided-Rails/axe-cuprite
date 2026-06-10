@@ -112,6 +112,36 @@ RSpec.describe AxeCuprite::Runner do
     end
   end
 
+  describe "injection failure reporting" do
+    it "surfaces the underlying errors from both paths when injection fails" do
+      visit "/passing"
+      injector = AxeCuprite::Injector.new(page)
+
+      allow(injector).to receive(:injected?).and_return(false)
+      allow(page).to receive(:execute_script)
+        .and_raise(RuntimeError, "boom from execute_script")
+      allow(injector).to receive(:try_add_script_tag)
+        .and_raise(RuntimeError, "boom from add_script_tag")
+
+      expect { injector.inject_source! }.to raise_error(
+        AxeCuprite::InjectionError,
+        /Underlying errors:.*execute_script: RuntimeError: boom from execute_script.*add_script_tag: RuntimeError: boom from add_script_tag/m
+      )
+    end
+
+    it "keeps the plain CSP message when neither path raises" do
+      visit "/passing"
+      injector = AxeCuprite::Injector.new(page)
+
+      allow(injector).to receive_messages(injected?: false, try_add_script_tag: false)
+      allow(page).to receive(:execute_script)
+
+      expect { injector.inject_source! }.to raise_error(
+        AxeCuprite::InjectionError
+      ) { |e| expect(e.message).not_to include("Underlying errors") }
+    end
+  end
+
   describe "global configuration" do
     it "applies a global skip-list" do
       AxeCuprite.configure { |c| c.skip_rules = [:color_contrast] }
