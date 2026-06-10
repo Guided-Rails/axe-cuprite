@@ -193,7 +193,7 @@ module AxeCuprite
 
       def format_node(node)
         lines = ["      - #{node.selector}"]
-        lines << "        #{truncate(node.html)}" if node.html
+        lines << "        #{truncate(node.html)}" if node.html && config.include_html
 
         if (cd = node.contrast_data)
           lines << "        contrast #{cd.contrast_ratio}:1 (needs #{cd.expected_contrast_ratio}:1) — " \
