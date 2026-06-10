@@ -48,7 +48,15 @@ module AxeCupriteVendor
 
   module_function
 
+  # A semver-ish version string: three dot-separated numbers with an optional
+  # prerelease suffix. Rejecting anything else keeps the value safe to splice
+  # into the registry URL and into version.rb, and catches honest typos before
+  # they corrupt the vendor directory.
+  VERSION_FORMAT = /\A\d+\.\d+\.\d+(-[\w.]+)?\z/
+
   def update!(version)
+    abort "Invalid version: #{version.inspect}" unless version.match?(VERSION_FORMAT)
+
     FileUtils.mkdir_p(VENDOR_DIR)
 
     dist = registry_dist(version)
