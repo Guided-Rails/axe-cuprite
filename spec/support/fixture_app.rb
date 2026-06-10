@@ -80,6 +80,18 @@ class FixtureApp
     </html>
   HTML
 
+  # Served with a real 404 for unknown paths so a typo'd fixture path in a spec
+  # (e.g. visit "/bad_contrst") surfaces as an error instead of silently
+  # rendering a valid, axe-clean page that lets the wrong assertion pass. The
+  # page itself stays accessible-clean; the status code is what makes it visible.
+  NOT_FOUND = <<~HTML
+    <!doctype html>
+    <html lang="en">
+    <head><meta charset="utf-8"><title>Not found</title></head>
+    <body><main><h1>Not found</h1></main></body>
+    </html>
+  HTML
+
   ROUTES = {
     "/passing" => PASSING,
     "/bad_contrast" => BAD_CONTRAST,
@@ -88,8 +100,9 @@ class FixtureApp
   }.freeze
 
   def call(env)
-    body = ROUTES.fetch(env["PATH_INFO"],
-                        '<!doctype html><html lang="en"><head><title>Not found</title></head><body><main><h1>Not found</h1></main></body></html>')
+    body = ROUTES[env["PATH_INFO"]]
+    return [404, { "content-type" => "text/html; charset=utf-8" }, [NOT_FOUND]] unless body
+
     [200, { "content-type" => "text/html; charset=utf-8" }, [body]]
   end
 end
