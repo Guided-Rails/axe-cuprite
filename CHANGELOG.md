@@ -16,6 +16,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The sha512 of the vendored `axe.min.js` is now recorded in
   `lib/axe/cuprite/vendor/axe.min.js.sha512`; a new `rake axe:verify` task
   re-checks the vendored engine against it, and CI runs it on every build.
+- Hardened the CI workflow: added a least-privilege `permissions: contents: read`
+  block (the `GITHUB_TOKEN` previously inherited the repo default, potentially
+  write-all) and pinned `actions/checkout` and `ruby/setup-ruby` to full commit
+  SHAs instead of mutable major-version tags. Added a Dependabot config
+  (`.github/dependabot.yml`) for the `github-actions` and `bundler` ecosystems so
+  the pinned SHAs and gem dependencies get automated update PRs
+  ([#12](https://github.com/Guided-Rails/axe-cuprite/issues/12)).
 
 ## [0.1.1] - 2026-06-09
 
