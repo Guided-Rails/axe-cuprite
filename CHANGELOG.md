@@ -17,6 +17,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   ([#14](https://github.com/Guided-Rails/axe-cuprite/issues/14)).
 
 ### Fixed
+- The result wrappers (`Results`/`Violation`/`Node`/`ContrastData`) now honor
+  their documented read-only contract: `@raw` is deep-frozen at construction, so
+  `raw` and `to_h` can safely expose the live underlying hash without a caller
+  being able to mutate the wrapper's internal state (which, via memoization,
+  could previously desync `violations`/`incomplete` from `raw`)
+  ([#17](https://github.com/Guided-Rails/axe-cuprite/issues/17)).
 - `Injector#inject_source!` no longer hides the real cause of an injection
   failure behind a blanket Content-Security-Policy message. When both the
   primary `execute_script` path and the `add_script_tag` fallback fail, the

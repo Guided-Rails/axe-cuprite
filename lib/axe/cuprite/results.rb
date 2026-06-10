@@ -1,14 +1,36 @@
 # frozen_string_literal: true
 
 module AxeCuprite
+  # Recursively freezes a parsed-JSON tree (hashes/arrays of scalars) so the
+  # read-only wrappers below can hand out `raw`/`to_h` without a caller being
+  # able to mutate internal state (which, via memoization, could otherwise
+  # desync `violations`/`incomplete` from `raw`). Idempotent and cheap on the
+  # slimmed payload we carry back.
+  module DeepFreeze
+    module_function
+
+    def call(obj)
+      case obj
+      when Hash
+        obj.each { |k, v| [k, v].each { |o| call(o) } }
+      when Array
+        obj.each { |v| call(v) }
+      end
+      obj.freeze
+    end
+  end
+
   # Wraps the (slimmed) payload returned by axe.run. We deliberately only carry
   # `violations` and `incomplete` across the CDP boundary plus a little metadata
   # — the full results object (with `passes`/`inapplicable`) can be huge.
+  #
+  # The wrappers are read-only: `@raw` is deep-frozen at construction, so `raw`
+  # and `to_h` expose the live underlying hash safely (callers cannot mutate it).
   class Results
     attr_reader :raw
 
     def initialize(raw)
-      @raw = raw || {}
+      @raw = DeepFreeze.call(raw || {})
     end
 
     def violations
@@ -47,7 +69,7 @@ module AxeCuprite
     attr_reader :raw
 
     def initialize(raw)
-      @raw = raw || {}
+      @raw = DeepFreeze.call(raw || {})
     end
 
     def id
@@ -88,7 +110,7 @@ module AxeCuprite
     attr_reader :raw
 
     def initialize(raw)
-      @raw = raw || {}
+      @raw = DeepFreeze.call(raw || {})
     end
 
     # axe gives `target` as an array of CSS selectors (one per frame depth).
@@ -137,7 +159,7 @@ module AxeCuprite
     attr_reader :raw
 
     def initialize(raw)
-      @raw = raw || {}
+      @raw = DeepFreeze.call(raw || {})
     end
 
     def fg_color
