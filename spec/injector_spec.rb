@@ -13,9 +13,14 @@ RSpec.describe AxeCuprite::Injector do
       injector.send(:timeout_error?, error)
     end
 
-    # Ferrum reports a JS error from a Runtime.evaluate response.
+    # A Ferrum::JavaScriptError carrying a given message. We stub #message rather
+    # than drive Ferrum's constructor: how it derives a message from a CDP
+    # response is a private detail that varies across ferrum patch releases, and
+    # all timeout_error? looks at is the class name and the message.
     def ferrum_js_error(message)
-      Ferrum::JavaScriptError.new("text" => message)
+      error = Ferrum::JavaScriptError.allocate
+      allow(error).to receive(:message).and_return(message)
+      error
     end
 
     it "treats Ferrum::TimeoutError as a timeout (the Cuprite fast-path)" do
