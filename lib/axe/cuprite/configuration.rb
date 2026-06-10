@@ -34,6 +34,13 @@ module AxeCuprite
     # Logger used for report_only output and warnings.
     attr_accessor :logger
 
+    # When true (default), failure messages and report_only logs include a
+    # truncated outer-HTML snippet of each offending element. Set to false to
+    # suppress those snippets (rule id + selector + check message only) on
+    # suites that render sensitive data, so page content can't leak into CI
+    # logs. See BeAxeClean#format_node.
+    attr_accessor :include_html
+
     def initialize
       @timeout         = 30
       @default_options = {}
@@ -41,6 +48,7 @@ module AxeCuprite
       @skip_rules      = []
       @auto_inject     = true
       @report_only     = false
+      @include_html    = true
       @logger          = default_logger
     end
 

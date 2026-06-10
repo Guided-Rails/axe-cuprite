@@ -156,6 +156,7 @@ AxeCuprite.configure do |c|
   c.skip_rules      = [:region]   # globally disabled rules
   c.auto_inject     = true        # (re)inject axe on demand inside #run
   c.report_only     = false       # log violations instead of failing (see below)
+  c.include_html    = true        # include element HTML snippets in output (see below)
   c.logger          = Logger.new($stdout)
 end
 ```
@@ -166,6 +167,22 @@ Set `report_only = true` to **log** violations instead of failing the example.
 This eases incremental adoption on an existing app — you can see what axe finds
 without turning the suite red. Negated assertions (`expect(page).not_to
 be_axe_clean`) ignore this flag.
+
+### Sensitive page content in output (`include_html`)
+
+Both failure messages and `report_only` logs include a **truncated outer-HTML
+snippet** (capped at 200 chars) of each offending element, so you can see *what*
+failed at a glance. On suites that render real data — staging-backed tests,
+seeded PII — those snippets can carry page content into CI logs or log
+aggregation. This is normal for a testing tool, but if it matters to you:
+
+- Point `c.logger` somewhere appropriate (a redacted sink, a dropped stream)
+  rather than `$stdout`, so `report_only` output doesn't fan out to aggregation.
+- Set `c.include_html = false` to drop the HTML snippets entirely. Output then
+  carries only the rule id, impact, help URL, element **selector**, and the axe
+  check message (for color-contrast, the fg/bg colors and ratio) — enough to
+  locate and fix a violation without echoing page content. Note the selector
+  itself can still reflect ids/classes from your markup.
 
 ## Caveats & engineering notes
 

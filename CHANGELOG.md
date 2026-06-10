@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `config.include_html` (default `true`) — set to `false` to suppress the
+  truncated outer-HTML snippets that failure messages and `report_only` logs
+  print for each offending element. Useful for suites that render sensitive data
+  (staging-backed tests, seeded PII), keeping page content out of CI logs while
+  still reporting rule id, selector, and check message. Documented the snippet
+  behavior and `logger` guidance in the README
+  ([#14](https://github.com/Guided-Rails/axe-cuprite/issues/14)).
+
 ### Security
 - `rake axe:update` now vendors axe-core from the official npm registry tarball
   (`registry.npmjs.org`) instead of the unpkg CDN, verifies the tarball against

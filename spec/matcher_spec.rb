@@ -135,4 +135,49 @@ RSpec.describe "be_axe_clean matcher" do
       expect(io.string).to include("color-contrast")
     end
   end
+
+  describe "include_html config" do
+    before { visit "/bad_contrast" }
+
+    it "includes the offending element's HTML snippet in failure messages by default" do
+      matcher = be_axe_clean.checking_only(:color_contrast)
+      expect(matcher.matches?(page)).to be(false)
+
+      msg = matcher.failure_message
+      aggregate_failures do
+        expect(msg).to include("#faded")          # selector — always present
+        expect(msg).to match(/<\w+/)              # an HTML tag snippet
+      end
+    end
+
+    it "suppresses HTML snippets when include_html = false" do
+      AxeCuprite.configure { |c| c.include_html = false }
+
+      matcher = be_axe_clean.checking_only(:color_contrast)
+      expect(matcher.matches?(page)).to be(false)
+
+      msg = matcher.failure_message
+      aggregate_failures do
+        expect(msg).to include("#faded")          # selector still shown
+        expect(msg).to include("color-contrast")  # rule id still shown
+        expect(msg).not_to match(/<\w+/)          # but no raw HTML tag
+      end
+    end
+
+    it "suppresses HTML snippets in report_only logs when include_html = false" do
+      io = StringIO.new
+      AxeCuprite.configure do |c|
+        c.report_only  = true
+        c.include_html = false
+        c.logger       = Logger.new(io)
+      end
+
+      expect(page).to be_axe_clean.checking_only(:color_contrast)
+
+      aggregate_failures do
+        expect(io.string).to include("color-contrast")
+        expect(io.string).not_to match(/<\w+/)
+      end
+    end
+  end
 end
