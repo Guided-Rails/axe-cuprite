@@ -50,46 +50,47 @@ RSpec.describe AxeCuprite::Injector do
     end
   end
 
-  # The non-Ferrum fallback in #evaluate_axe is best-effort and unsupported (the
-  # suite runs under Cuprite, where ferrum_page is always truthy), but it should
-  # not silently break. A driver with no #browser makes the real ferrum_page
-  # return nil, forcing the fallback; we then assert it routes through
-  # evaluate_async_script under our explicit timeout rather than
-  # Capybara.default_max_wait_time.
-  describe "#evaluate_axe non-Ferrum fallback" do
-    subject(:injector) { described_class.new(page) }
-
-    let(:page) { instance_double(Capybara::Session, driver: non_ferrum_driver) }
-    let(:non_ferrum_driver) { Object.new } # does not respond to #browser
-    let(:context) { { include: [["#main"]] } }
-    let(:options) { { runOnly: "color-contrast" } }
-    let(:timeout) { 17 }
-
-    def evaluate
-      injector.send(:evaluate_axe, context, options, timeout)
-    end
-
+  describe "#evaluate_axe" do
     it "falls back to evaluate_async_script with the run JS and args" do
-      result = { "violations" => [], "incomplete" => [] }
-      allow(page).to receive(:evaluate_async_script).and_return(result)
+      page = instance_double(Capybara::Session, driver: Object.new)
+      expected_result = { "violations" => [], "incomplete" => [] }
+      allow(page).to receive(:evaluate_async_script).and_return(expected_result)
+      injector = described_class.new(page)
 
-      expect(evaluate).to eq(result)
+      result = injector.send(
+        :evaluate_axe,
+        { include: [["#main"]] },
+        { runOnly: "color-contrast" },
+        17
+      )
+
+      expect(result).to eq(expected_result)
       expect(page).to have_received(:evaluate_async_script)
-        .with(described_class::RUN_JS, context, options)
+        .with(
+          described_class::RUN_JS,
+          { include: [["#main"]] },
+          { runOnly: "color-contrast" }
+        )
     end
 
     it "runs under the explicit timeout, not Capybara.default_max_wait_time" do
+      page = instance_double(Capybara::Session, driver: Object.new)
       Capybara.default_max_wait_time = 2
       observed_wait = nil
       allow(page).to receive(:evaluate_async_script) do
         observed_wait = Capybara.default_max_wait_time
         { "violations" => [], "incomplete" => [] }
       end
+      injector = described_class.new(page)
 
-      evaluate
+      injector.send(
+        :evaluate_axe,
+        { include: [["#main"]] },
+        { runOnly: "color-contrast" },
+        17
+      )
 
-      expect(observed_wait).to eq(timeout)
-      # And the temporary bump is restored afterwards.
+      expect(observed_wait).to eq(17)
       expect(Capybara.default_max_wait_time).to eq(2)
     end
   end
