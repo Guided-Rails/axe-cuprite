@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Repositioned as **Cuprite-only**: the README, gemspec `description`, and
+  `AGENTS.md` no longer advertise support for "any real-browser Capybara driver."
+  Cuprite is the only supported and tested driver; the driver-neutral JS approach
+  is described as the implementation detail that makes the gem work on Cuprite
+  (and avoid Selenium internals), not a promise of broad driver support. The
+  best-effort non-Ferrum fallback in `Injector#evaluate_axe` is kept but is now
+  documented as unsupported/untested
+  ([#31](https://github.com/Guided-Rails/axe-cuprite/issues/31)).
+
+### Added
+- A unit test pinning the best-effort non-Ferrum fallback in
+  `Injector#evaluate_axe`: with no Ferrum page it routes through
+  `evaluate_async_script` under the explicit timeout rather than
+  `Capybara.default_max_wait_time`, so the path can't silently break
+  ([#31](https://github.com/Guided-Rails/axe-cuprite/issues/31)).
+
 ## [0.2.0] - 2026-06-10
 
 ### Added

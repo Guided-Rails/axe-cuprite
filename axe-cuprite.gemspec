@@ -14,8 +14,8 @@ Gem::Specification.new do |spec|
     Capybara system/feature tests and exposes the results as RSpec matchers
     (be_axe_clean / be_accessible). Unlike Deque's official axe-core-capybara gem,
     it never touches Selenium-specific driver internals: axe is driven entirely
-    through Capybara's driver-neutral JavaScript API, so it works with Cuprite
-    and any other real-browser driver.
+    through Capybara's driver-neutral JavaScript API, which is what makes it work
+    on Cuprite. Cuprite is the only supported and tested driver.
   DESC
 
   spec.homepage = "https://github.com/Guided-Rails/axe-cuprite"
