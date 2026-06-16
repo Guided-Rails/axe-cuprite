@@ -25,6 +25,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   best-effort non-Ferrum fallback in `Injector#evaluate_axe` is kept but is now
   documented as unsupported/untested
   ([#31](https://github.com/Guided-Rails/axe-cuprite/issues/31)).
+- Documented that `AxeCuprite::Results` (and its nested wrappers) takes ownership
+  of the hash passed in and deep-freezes it **in place** — so a caller
+  constructing `Results.new(hash)` shouldn't pass or reuse a hash they intend to
+  mutate afterward. No behavior change; clarifies the existing read-only contract
+  in the `Results` doc comment and the README runner section
+  ([#33](https://github.com/Guided-Rails/axe-cuprite/issues/33)).
 
 ### Added
 - A unit test pinning the best-effort non-Ferrum fallback in
