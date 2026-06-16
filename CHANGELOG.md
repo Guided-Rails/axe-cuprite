@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- The packaged gem no longer ships the dev-only vendoring rake tasks
+  (`lib/axe/cuprite/tasks/*.rake` — `axe:update` / `axe:verify` / `axe:version`).
+  These operate on the gem's read-only, version-pinned `vendor/` directory and
+  `axe:verify` couldn't even run from an installed gem (its recorded checksum
+  isn't shipped), so they were broken for consumers. They remain available in a
+  repo checkout for development
+  ([#32](https://github.com/Guided-Rails/axe-cuprite/issues/32)).
+
 ### Changed
 - Repositioned as **Cuprite-only**: the README, gemspec `description`, and
   `AGENTS.md` no longer advertise support for "any real-browser Capybara driver."

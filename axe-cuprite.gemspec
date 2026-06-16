@@ -30,7 +30,6 @@ Gem::Specification.new do |spec|
     "lib/**/*.rb",
     "lib/axe/cuprite/vendor/axe.min.js",
     "lib/axe/cuprite/vendor/axe-core-LICENSE.txt",
-    "lib/axe/cuprite/tasks/*.rake",
     "README.md",
     "CHANGELOG.md",
     "LICENSE.txt"
