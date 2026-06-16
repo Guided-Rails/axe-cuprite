@@ -2,7 +2,7 @@
 
 module AxeCuprite
   # Version of the axe-cuprite gem itself.
-  VERSION = "0.2.0"
+  VERSION = "1.0.0"
 
   # Version of the axe-core engine vendored under lib/axe/cuprite/vendor/axe.min.js.
   # Keep this in sync with the vendored file via `rake axe:update`.
