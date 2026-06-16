@@ -1,5 +1,9 @@
 # axe-cuprite
 
+[![Gem Version](https://img.shields.io/gem/v/axe-cuprite)](https://rubygems.org/gems/axe-cuprite)
+[![CI](https://github.com/Guided-Rails/axe-cuprite/actions/workflows/ci.yml/badge.svg)](https://github.com/Guided-Rails/axe-cuprite/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.txt)
+
 Run the [axe-core](https://github.com/dequelabs/axe-core) accessibility engine
 against pages in your **Capybara system/feature tests driven by
 [Cuprite](https://github.com/rubycdp/cuprite)** (the CDP/Ferrum headless-Chrome
@@ -32,6 +36,14 @@ best-effort fallback exists), but they are unsupported and untested.
 
 There is no runtime dependency on Selenium, Cuprite, or Ferrum — the only runtime
 dependency is Capybara. You bring your own driver.
+
+## Requirements
+
+- **Ruby** >= 3.0
+- **Capybara** >= 3.0, < 4.0 (the only runtime dependency)
+- **[Cuprite](https://github.com/rubycdp/cuprite)** as the Capybara driver — the
+  only supported and tested driver
+- **Chrome or Chromium**, which Cuprite drives over CDP
 
 ## Installation
 
@@ -262,6 +274,22 @@ sha512 of the vendored engine is recorded in
 `lib/axe/cuprite/vendor/axe.min.js.sha512` so it can be re-checked at any time
 with `rake axe:verify` (CI does this on every run). Note the bump in
 `CHANGELOG.md`.
+
+## Versioning
+
+axe-cuprite follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The **public API** covered by that guarantee is the documented surface:
+`AxeCuprite` (module methods), `AxeCuprite::Configuration`, `AxeCuprite::Runner`,
+the result wrappers (`Results` / `Violation` / `Node` / `ContrastData`), the error
+classes, and the RSpec matcher DSL (`be_axe_clean` / `be_accessible` and its
+chainers). Classes like `AxeCuprite::Injector` and `AxeCuprite::DeepFreeze` are
+internal implementation details and may change in any release. Breaking changes to
+the public API only land in a major version, and every release is noted in
+[`CHANGELOG.md`](CHANGELOG.md).
+
+Note that the **vendored axe-core version** can change in a minor release; axe may
+report new violations after an engine bump, which can turn a previously-green
+suite red. Such bumps are always called out in the changelog.
 
 ## Licensing
 

@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-06-16
+
+First stable release. No functional changes since `0.2.0` — this tags the API as
+stable under [Semantic Versioning](https://semver.org/spec/v2.0.0.html). The
+public API is the documented surface of `AxeCuprite`, `AxeCuprite::Configuration`,
+`AxeCuprite::Runner`, the result wrappers (`Results`/`Violation`/`Node`/
+`ContrastData`), the error classes, and the RSpec matcher DSL; classes such as
+`AxeCuprite::Injector` and `AxeCuprite::DeepFreeze` are internal and not covered
+by the stability guarantee.
+
 ### Fixed
 - The packaged gem no longer ships the dev-only vendoring rake tasks
   (`lib/axe/cuprite/tasks/*.rake` — `axe:update` / `axe:verify` / `axe:version`).
@@ -129,3 +139,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   auto-inject toggle, and report-only mode.
 - `rake axe:update[VERSION]` to refresh the vendored axe-core engine and bump
   the `AXE_CORE_VERSION` constant.
+
+[Unreleased]: https://github.com/Guided-Rails/axe-cuprite/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/Guided-Rails/axe-cuprite/compare/v0.2.0...v1.0.0
+[0.2.0]: https://github.com/Guided-Rails/axe-cuprite/compare/v0.1.1...v0.2.0
+[0.1.1]: https://github.com/Guided-Rails/axe-cuprite/compare/v0.1.0...v0.1.1
+[0.1.0]: https://github.com/Guided-Rails/axe-cuprite/releases/tag/v0.1.0
