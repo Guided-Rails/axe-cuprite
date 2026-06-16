@@ -9,7 +9,7 @@ require "axe/cuprite/runner"
 
 # axe-cuprite drives the axe-core accessibility engine through Capybara's
 # driver-neutral JavaScript API, so it works with Cuprite (Ferrum/CDP) and any
-# other real-browser Capybara driver — without ever touching Selenium internals.
+# other real-browser Capybara driver.
 #
 # Quick start:
 #
