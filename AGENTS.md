@@ -15,8 +15,10 @@ The whole reason this gem exists: Deque's official `axe-core-capybara` reaches i
 Capybara driver's **Selenium** `browser` object to inject and run axe, so it breaks on
 **Cuprite** (the Ferrum/CDP headless-Chrome driver, which has no Selenium browser). This gem
 drives axe exclusively through Capybara's **driver-neutral** JS API (`execute_script`,
-`evaluate_async_script`) and Ferrum's public API — **never** Selenium internals. Cuprite is the
-primary must-pass target; staying driver-agnostic is a bonus, not the goal.
+`evaluate_async_script`) and Ferrum's public API — **never** Selenium internals. **Cuprite is
+the only supported and tested driver.** The driver-neutral JS approach is an implementation
+detail that makes the gem work on Cuprite — not a promise of broad driver support. Other
+real-browser drivers may work via a best-effort fallback, but they are unsupported and untested.
 
 **The only runtime dependency is Capybara.** Do not add a runtime dependency on cuprite, ferrum,
 selenium, or rspec — consumers bring their own driver/framework. cuprite/ferrum/rspec are

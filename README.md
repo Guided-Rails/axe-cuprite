@@ -23,9 +23,12 @@ they break.
 just a JavaScript file — a driver-agnostic engine — so we drive it exclusively
 through Capybara's **driver-neutral** JavaScript API (`execute_script`,
 `evaluate_async_script`), which Cuprite fully implements. That single decision is
-what makes this gem work where the official one doesn't. As a bonus it stays
-driver-agnostic (it works on any real-browser Capybara driver), but **Cuprite is
-the primary, must-pass target.**
+what makes this gem work where the official one doesn't.
+
+**Cuprite is the only supported and tested driver.** Driving axe through the
+driver-neutral JS API is what lets the gem avoid Selenium internals — not a promise
+of broad driver support. Other real-browser drivers may happen to work (a
+best-effort fallback exists), but they are unsupported and untested.
 
 There is no runtime dependency on Selenium, Cuprite, or Ferrum — the only runtime
 dependency is Capybara. You bring your own driver.
@@ -197,10 +200,11 @@ page routinely exceeds.
 axe-cuprite avoids this trap: on Cuprite it calls Ferrum's
 `page.evaluate_async(script, explicit_wait, *args)` **directly**, with its own
 timeout (default **30s**, configurable) that is completely **decoupled from
-`default_max_wait_time`**. On non-Ferrum drivers it falls back to
-`evaluate_async_script` under a temporarily-raised wait time. If axe still
-doesn't finish, you get a clear `AxeCuprite::TimeoutError` telling you to raise
-the timeout or scope the run with `.within`.
+`default_max_wait_time`**. (On a non-Ferrum driver there is a best-effort,
+untested fallback to `evaluate_async_script` under a temporarily-raised wait time —
+but Cuprite is the only supported driver.) If axe still doesn't finish, you get a
+clear `AxeCuprite::TimeoutError` telling you to raise the timeout or scope the run
+with `.within`.
 
 Tune it globally (`c.timeout = 60`) or per assertion (`.with_timeout(60)`).
 
