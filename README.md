@@ -149,6 +149,13 @@ on top of your configured defaults. Only `violations` and `incomplete` are
 carried back across the CDP boundary — the full results object (with
 `passes`/`inapplicable`) can be huge.
 
+`AxeCuprite::Results` is read-only: it **takes ownership of the hash it's given
+and deep-freezes it in place** (this backs the read-only `raw`/`to_h` contract).
+You normally get one straight from `Runner#run`, so this is transparent — but if
+you construct `Results.new(hash)` yourself, don't pass or keep a reference to a
+hash you intend to mutate afterward, or you'll hit a `FrozenError`. Dup it first
+if you need a mutable copy.
+
 ## Configuration
 
 ```ruby

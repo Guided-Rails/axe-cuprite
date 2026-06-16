@@ -26,6 +26,13 @@ module AxeCuprite
   #
   # The wrappers are read-only: `@raw` is deep-frozen at construction, so `raw`
   # and `to_h` expose the live underlying hash safely (callers cannot mutate it).
+  #
+  # Ownership note: `Results` (and the nested `Violation`/`Node`/`ContrastData`
+  # wrappers) **take ownership of the hash passed in and deep-freeze it in place**
+  # — they do not copy first. For the internal flow this is safe (the payload
+  # comes fresh off the CDP boundary), but if you construct `Results.new(hash)`
+  # yourself, don't pass — or hold onto — a hash you intend to mutate afterward,
+  # or you'll hit a `FrozenError`. Dup it first if you need a mutable copy.
   class Results
     attr_reader :raw
 
