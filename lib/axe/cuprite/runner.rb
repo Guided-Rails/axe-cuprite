@@ -73,11 +73,7 @@ module AxeCuprite
     # axe accepts a selector string, or {include:, exclude:}. Stringify hash
     # keys so Ferrum serializes them predictably across CDP.
     def normalize_context(context)
-      case context
-      when nil, String then context
-      when Hash then deep_stringify(context)
-      else context
-      end
+      context.is_a?(Hash) ? deep_stringify(context) : context
     end
 
     def deep_stringify(value)

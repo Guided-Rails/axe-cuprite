@@ -4,7 +4,7 @@ require "spec_helper"
 require "stringio"
 require "logger"
 
-RSpec.describe "be_axe_clean matcher" do
+RSpec.describe AxeCuprite::RSpec::BeAxeClean do
   it "passes on an accessible page" do
     visit "/passing"
     expect(page).to be_axe_clean

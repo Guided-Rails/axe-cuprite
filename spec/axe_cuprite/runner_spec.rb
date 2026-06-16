@@ -37,11 +37,12 @@ RSpec.describe AxeCuprite::Runner do
     it "injects axe only once across repeated runs on one page" do
       visit "/passing"
       calls = 0
-      allow_any_instance_of(AxeCuprite::Injector)
-        .to receive(:inject_source!).and_wrap_original do |original, *args|
-          calls += 1
-          original.call(*args)
-        end
+      injector = AxeCuprite::Injector.new(page)
+      allow(AxeCuprite::Injector).to receive(:new).and_return(injector)
+      allow(injector).to receive(:inject_source!).and_wrap_original do |original, *args|
+        calls += 1
+        original.call(*args)
+      end
 
       runner = described_class.new(page)
       runner.run
@@ -54,11 +55,12 @@ RSpec.describe AxeCuprite::Runner do
     it "does not re-inject across two separate matcher assertions" do
       visit "/passing"
       calls = 0
-      allow_any_instance_of(AxeCuprite::Injector)
-        .to receive(:inject_source!).and_wrap_original do |original, *args|
-          calls += 1
-          original.call(*args)
-        end
+      injector = AxeCuprite::Injector.new(page)
+      allow(AxeCuprite::Injector).to receive(:new).and_return(injector)
+      allow(injector).to receive(:inject_source!).and_wrap_original do |original, *args|
+        calls += 1
+        original.call(*args)
+      end
 
       expect(page).to be_axe_clean
       expect(page).to be_axe_clean
@@ -125,7 +127,12 @@ RSpec.describe AxeCuprite::Runner do
 
       expect { injector.inject_source! }.to raise_error(
         AxeCuprite::InjectionError,
-        /Underlying errors:.*execute_script: RuntimeError: boom from execute_script.*add_script_tag: RuntimeError: boom from add_script_tag/m
+        Regexp.new(
+          "Underlying errors:.*" \
+          "execute_script: RuntimeError: boom from execute_script.*" \
+          "add_script_tag: RuntimeError: boom from add_script_tag",
+          Regexp::MULTILINE
+        )
       )
     end
 

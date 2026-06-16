@@ -41,15 +41,6 @@ Gem::Specification.new do |spec|
   # ferrum, selenium or rspec — consumers bring their own driver/framework.
   spec.add_dependency "capybara", ">= 3.0", "< 4.0"
 
-  # Development / test only: this is how WE prove it works on Cuprite.
-  spec.add_development_dependency "cuprite", "~> 0.17"
-  spec.add_development_dependency "ferrum", "~> 0.17"
-  spec.add_development_dependency "puma", ">= 5.0", "< 9.0"
-  spec.add_development_dependency "rack", ">= 2.0", "< 4.0"
-  spec.add_development_dependency "rackup", "~> 2.0"
-  spec.add_development_dependency "rake", "~> 13.0"
-  spec.add_development_dependency "rspec", "~> 3.0"
-  spec.add_development_dependency "rubocop", "~> 1.86"
-  spec.add_development_dependency "rubocop-rake", "~> 0.7"
-  spec.add_development_dependency "rubocop-rspec", "~> 3.0"
+  # Development/test dependencies live in the Gemfile (how WE prove it works
+  # on Cuprite), keeping them out of the gem's runtime metadata.
 end

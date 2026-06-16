@@ -9,7 +9,8 @@ require "stringio"
 require "zlib"
 
 namespace :axe do
-  desc "Refresh the vendored axe-core engine. Usage: rake 'axe:update[4.12.0]' or VERSION=4.12.0 rake axe:update (default: latest)"
+  desc "Refresh the vendored axe-core engine. " \
+       "Usage: rake 'axe:update[4.12.0]' or VERSION=4.12.0 rake axe:update (default: latest)"
   task :update, [:version] do |_task, args|
     version = args[:version] || ENV["VERSION"] || AxeCupriteVendor.latest_version
     AxeCupriteVendor.update!(version)
@@ -108,7 +109,9 @@ module AxeCupriteVendor
   # registry publishes for it (dist.integrity sha512, plus legacy dist.shasum).
   def verify_tarball!(tarball, dist)
     integrity = dist["integrity"]
-    abort "Registry metadata has no sha512 integrity for the tarball — refusing to vendor." unless integrity&.start_with?("sha512-")
+    unless integrity&.start_with?("sha512-")
+      abort "Registry metadata has no sha512 integrity for the tarball — refusing to vendor."
+    end
 
     actual = "sha512-#{Digest::SHA512.base64digest(tarball)}"
     unless actual == integrity
