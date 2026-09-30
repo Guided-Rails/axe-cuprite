@@ -4,6 +4,11 @@
 [![CI](https://github.com/Guided-Rails/axe-cuprite/actions/workflows/ci.yml/badge.svg)](https://github.com/Guided-Rails/axe-cuprite/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.txt)
 
+> [!WARNING]
+> **This project is archived and no longer maintained.** It will receive no
+> further updates, bug fixes, or axe-core engine bumps. The published 1.0.0 gem
+> remains available on RubyGems, but you're welcome to fork it if you need changes.
+
 Run the [axe-core](https://github.com/dequelabs/axe-core) accessibility engine
 against pages in your **Capybara system/feature tests driven by
 [Cuprite](https://github.com/rubycdp/cuprite)** (the CDP/Ferrum headless-Chrome
